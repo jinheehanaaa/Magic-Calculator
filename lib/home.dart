@@ -8,18 +8,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String calcText = "";
+  int count = 0;
+  String dob = "";
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 50, 0, 251),
+          backgroundColor: Color.fromARGB(255, 0, 0, 0),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                height: size.height / 15,
-                color: Colors.amber,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // We can use SizedBox if we don't use decoration widget
+                    SizedBox(
+                      height: size.height / 15,
+                      child: Text(
+                        calcText,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 30),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
               ),
               Container(
                   height: size.height / 1.7,
@@ -65,16 +85,17 @@ class _HomePageState extends State<HomePage> {
                           blocks("7"),
                           blocks("8"),
                           blocks("9"),
-                          blocks("-", Colors.amberAccent)
+                          blocks("-", Color.fromARGB(255, 112, 102, 64))
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          blocks("1"),
-                          blocks("2"),
-                          blocks("3"),
-                          blocks("=", Colors.amberAccent)
+                          blocks(":"),
+                          blocks("0"),
+                          blocks("."),
+                          blocks("=",
+                              count == 0 ? Colors.amberAccent : Colors.green)
                         ],
                       ),
                     ],
@@ -86,29 +107,55 @@ class _HomePageState extends State<HomePage> {
 
 // Repeated button blocks
   Widget blocks(String buttonText, [Color? buttonColor]) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 14, left: 8, right: 8),
-      child: Container(
-          height: 70,
-          width: 70,
-          decoration: const BoxDecoration(
-            color: Color(
-              0xff22252D,
+    return GestureDetector(
+      onTap: () {
+        if (buttonText == "AC") {
+          setState(() {
+            calcText = "";
+          });
+        } else if (buttonText == "=") {
+          if (count == 0) {
+            setState(() {
+              dob = calcText;
+              count += 1;
+              calcText = "";
+            });
+          } else {
+            setState(() {
+              calcText = dob;
+              count -= 1;
+            });
+          }
+        } else {
+          setState(() {
+            calcText = calcText + buttonText;
+          });
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 14, left: 8, right: 8),
+        child: Container(
+            height: 70,
+            width: 70,
+            decoration: const BoxDecoration(
+              color: Color(
+                0xff22252D,
+              ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(15),
+              ),
             ),
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              buttonText,
-              style: TextStyle(
-                  //  // make default color (if not specified) by using ?? nullable color
-                  color: buttonColor ?? Colors.blue,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
-            ),
-          )),
+            child: Center(
+              child: Text(
+                buttonText,
+                style: TextStyle(
+                    //  // make default color (if not specified) by using ?? nullable color
+                    color: buttonColor ?? Colors.blue,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+            )),
+      ),
     );
   }
 }
