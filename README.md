@@ -1,0 +1,3 @@
+# Objective
+- Magic calculator
+
